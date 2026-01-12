@@ -1,19 +1,15 @@
 ﻿import sqlite3
-from pathlib import Path
+import os
 
-DB_PATH = Path("data/ecomm.db")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(BASE_DIR, "data", "ecomm.db")
 
 def run_read_query(sql: str):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-
     cur = conn.cursor()
     cur.execute(sql)
-
-    rows = cur.fetchall()
-    columns = rows[0].keys() if rows else []
-
-    result = [dict(row) for row in rows]
-
+    rows = [dict(row) for row in cur.fetchall()]
+    cols = list(rows[0].keys()) if rows else []
     conn.close()
-    return columns, result
+    return cols, rows
